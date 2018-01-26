@@ -1,20 +1,57 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'test_jenkins_release'
+            keyPassword ALIAS_PASSWORD
+            storeFile file('./../keystore/test_jenkins_release_key.jks')
+            storePassword STORE_PASSWORD
+        }
+    }
+
+    //渠道Flavors
+    productFlavors {
+        xiaomi {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+        }
+        wandoujia {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE:    "wandoujia"]
+        }
+    }
+
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion build_tools_version
+
     defaultConfig {
         applicationId "com.example.jenkins.testjenkins"
-        minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode version_code
+        versionName version_name
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
+        }
+        debug {
+            signingConfig signingConfigs.releaseConfig
+        }
+    }
+
+    //修改生成的apk名字及输出文件夹
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                def date = Calendar.getInstance();
+                def timeStr = "_" + date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE)) + ".apk";
+                def fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.productFlavors[0].name}" + timeStr;
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }
