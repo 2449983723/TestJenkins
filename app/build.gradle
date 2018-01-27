@@ -48,12 +48,13 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 def date = Calendar.getInstance();
-                def timeStr = "_" + date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE)) + ".apk";
-                def fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.productFlavors[0].name}" + timeStr;
+                def timeStr = date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE));
+                def fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.productFlavors[0].name}" + "_" + timeStr + ".apk";
                 //是否为Jenkins打包，输出路径不同
                 def outDirectory
                 if ("true".equals(IS_JENKINS)) {
                     outDirectory = BUILD_PATH_JENKINS
+                    outDirectory = outDirectory + "\\" + BUILD_TYPE + "\\" + timeStr
                 } else {
                     outDirectory = outputFile.parent
                 }
