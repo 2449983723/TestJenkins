@@ -24,10 +24,10 @@ android {
     buildToolsVersion build_tools_version
 
     defaultConfig {
-        applicationId "com.example.jenkins.testjenkins"
+        applicationId project.APPLICATION_ID
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode version_code
+        versionCode Integer.parseInt(project.VERSION_CODE)
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
