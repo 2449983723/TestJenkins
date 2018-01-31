@@ -37,7 +37,7 @@ if not os.path.exists(or_code_path):
 or_code_file_path = or_code_path + '/' + build_time + '.png'
 if os.path.exists(or_code_file_path):
     os.remove(or_code_file_path)
-clearFile()
+# clearFile()
 dumpToFile(apk_path)
 dumpToFile(or_code_file_path)
 
