@@ -64,14 +64,12 @@ android {
                 output.outputFile = new File(outDirectory, fileName)
                 // jenkins打包生成二维码
                 if ("true".equals(IS_JENKINS)) {
-                    if (tasks.findByPath('generateOR') == null) {
-                        tasks.create(name: 'generateOR', type: Exec) {
-                            println '---------------------generateQR------------------------'
-                            // 执行jenkinsQR.py，生成二维码
-                            def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
-                            pycmd.execute()
-                            println pycmd
-                        }
+                    tasks.create(name: 'generateOR', type: Exec, overwrite: true) {
+                        println '---------------------generateQR------------------------'
+                        // 执行jenkinsQR.py，生成二维码
+                        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
+                        pycmd.execute()
+                        println pycmd
                     }
                 }
             }
