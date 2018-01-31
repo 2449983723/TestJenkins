@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def timeStr = '20180130_1545'
+
 android {
     signingConfigs {
         releaseConfig {
@@ -48,9 +50,9 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 def date = Calendar.getInstance();
-                def timeStr = date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE));
+                timeStr = date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE));
                 def fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${variant.productFlavors[0].name}" + "_" + timeStr + ".apk";
-                //是否为Jenkins打包，输出路径不同
+                // 是否为Jenkins打包，输出路径不同
                 def outDirectory
                 if ("true".equals(IS_JENKINS)) {
                     outDirectory = BUILD_PATH_JENKINS
@@ -59,7 +61,18 @@ android {
                     outDirectory = outputFile.parent
                 }
                 output.outputFile = new File(outDirectory, fileName)
-
+                // jenkins打包生成二维码
+                if ("true".equals(IS_JENKINS)) {
+                    if (tasks.findByPath('generateOR') == null) {
+                        tasks.create(name: 'generateOR', type: Exec) {
+                            println '---------------------generateQR------------------------'
+                            // 执行jenkinsQR.py，生成二维码
+                            def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
+                            pycmd.execute()
+                            println pycmd
+                        }
+                    }
+                }
             }
         }
     }
