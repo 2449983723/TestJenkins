@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 def timeStr = '20180130_1545'
+def fileName = ''
 
 android {
     signingConfigs {
@@ -51,7 +52,7 @@ android {
             if (outputFile != null && outputFile.name.endsWith('.apk')) {
                 def date = Calendar.getInstance();
                 timeStr = date.get(Calendar.YEAR) + (((date.get(Calendar.MONTH) + 1) >= 10 ? date.get(Calendar.MONTH) + 1 : "0" + (date.get(Calendar.MONTH) + 1))) + (date.get(Calendar.DAY_OF_MONTH) >= 10 ? date.get(Calendar.DAY_OF_MONTH) : "0" + date.get(Calendar.DAY_OF_MONTH)) + "_" + (date.get(Calendar.HOUR_OF_DAY) >= 10 ? date.get(Calendar.HOUR_OF_DAY) : "0" + date.get(Calendar.HOUR_OF_DAY)) + (date.get(Calendar.MINUTE) >= 10 ? date.get(Calendar.MINUTE) : "0" + date.get(Calendar.MINUTE));
-                def fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${PRODUCT_FLAVORS}" + "_" + timeStr + ".apk";
+                fileName = "Android_${defaultConfig.versionName}_${defaultConfig.versionCode}_${PRODUCT_FLAVORS}" + "_" + timeStr + ".apk";
                 // 是否为Jenkins打包，输出路径不同
                 def outDirectory
                 if ("true".equals(IS_JENKINS)) {
@@ -63,15 +64,15 @@ android {
                 println '---------------------' + fileName + '---------------------'
                 output.outputFile = new File(outDirectory, fileName)
                 // jenkins打包生成二维码
-                if ("true".equals(IS_JENKINS)) {
-                    tasks.create(name: 'generateOR', type: Exec, overwrite: true) {
-                        println '---------------------generateQR------------------------'
-                        // 执行jenkinsQR.py，生成二维码
-                        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
-                        pycmd.execute()
-                        println pycmd
-                    }
-                }
+//                if ("true".equals(IS_JENKINS)) {
+//                    tasks.create(name: 'generateOR', type: Exec, overwrite: true) {
+//                        println '---------------------generateQR------------------------'
+//                        // 执行jenkinsQR.py，生成二维码
+//                        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
+//                        pycmd.execute()
+//                        println pycmd
+//                    }
+//                }
             }
         }
     }
@@ -85,4 +86,26 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+}
+
+task generateQR (type: Exec) << {
+    if ("true".equals(IS_JENKINS)) {
+        println '---------------------generateQR------------------------'
+        // 执行jenkinsQR.py，生成二维码
+        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
+        pycmd.execute()
+        println pycmd
+    }
+}
+
+tasks.each() {
+    task -> println '---------------------' + task.name + '------------------------'
+}
+
+assemble.doFirst {
+    println '---------------------doFirst------------------------'
+}
+assemble.doLast {
+    println '---------------------doLast------------------------'
+    generateQR.execute()
 }
