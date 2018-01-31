@@ -6,18 +6,18 @@ import qrcode
 import os
 
 
-# log_file_name = 'log.txt'
-#清空文件内容
-# def clearFile():
-#     f = open(log_file_name, 'w+')
-#     f.truncate()
-#     f.close()
+log_file_name = 'log_python.txt'
+# 清空文件内容
+def clearFile():
+    f = open(log_file_name, 'w+')
+    f.truncate()
+    f.close()
 
-# # 输出内容到文件
-# def dumpToFile(content):
-#     f = open(log_file_name, 'a')
-#     f.write(content + '\n')
-#     f.close()
+# 输出内容到文件
+def dumpToFile(content):
+    f = open(log_file_name, 'a')
+    f.write(content + '\n')
+    f.close()
 
 
 # 编译类型（debug还是release）
@@ -37,9 +37,9 @@ if not os.path.exists(or_code_path):
 or_code_file_path = or_code_path + '/' + build_time + '.png'
 if os.path.exists(or_code_file_path):
     os.remove(or_code_file_path)
-# clearFile()
-# dumpToFile(apk_path)
-# dumpToFile(or_code_file_path)
+clearFile()
+dumpToFile(apk_path)
+dumpToFile(or_code_file_path)
 
 # 生成二维码
 img = qrcode.make(apk_path)
