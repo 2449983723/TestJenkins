@@ -61,18 +61,7 @@ android {
                 } else {
                     outDirectory = outputFile.parent
                 }
-                println '---------------------' + fileName + '---------------------'
                 output.outputFile = new File(outDirectory, fileName)
-                // jenkins打包生成二维码
-//                if ("true".equals(IS_JENKINS)) {
-//                    tasks.create(name: 'generateOR', type: Exec, overwrite: true) {
-//                        println '---------------------generateQR------------------------'
-//                        // 执行jenkinsQR.py，生成二维码
-//                        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
-//                        pycmd.execute()
-//                        println pycmd
-//                    }
-//                }
             }
         }
     }
@@ -88,24 +77,19 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-task generateQR (type: Exec) << {
-    if ("true".equals(IS_JENKINS)) {
-        println '---------------------generateQR------------------------'
-        // 执行jenkinsQR.py，生成二维码
-        def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
-        pycmd.execute()
-        println pycmd
+// 在最后一个task后执行生成二维码胡操作
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks[graph.allTasks.size()-1].doLast {
+        println '---------------------doLast------------------------'
+        // jenkins打包生成二维码
+        if ("true".equals(IS_JENKINS)) {
+            tasks.create(name: 'generateOR', type: Exec, overwrite: true) {
+                println '---------------------generateQR------------------------'
+                // 执行jenkinsQR.py，生成二维码
+                def pycmd = "python jenkinsQR.py " + BUILD_TYPE + ' ' + timeStr + ' ' + BUILD_PATH_JENKINS + ' ' + fileName
+                pycmd.execute()
+                println pycmd
+            }
+        }
     }
-}
-
-tasks.each() {
-    task -> println '---------------------' + task.name + '------------------------'
-}
-
-assemble.doFirst {
-    println '---------------------doFirst------------------------'
-}
-assemble.doLast {
-    println '---------------------doLast------------------------'
-    generateQR.execute()
 }
