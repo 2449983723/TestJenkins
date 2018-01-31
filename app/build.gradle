@@ -60,6 +60,7 @@ android {
                 } else {
                     outDirectory = outputFile.parent
                 }
+                println '---------------------' + fileName + '---------------------'
                 output.outputFile = new File(outDirectory, fileName)
                 // jenkins打包生成二维码
                 if ("true".equals(IS_JENKINS)) {
