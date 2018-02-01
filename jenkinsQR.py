@@ -46,5 +46,4 @@ try:
     img = qrcode.make(apk_path)
     img.save(or_code_file_path)
 except Exception, e:
-    print 'traceback.print_exc():'
-    traceback.print_exc()
+    dumpToFile('traceback.format_exc():\n%s' % traceback.format_exc()
