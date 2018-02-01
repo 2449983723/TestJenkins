@@ -19,8 +19,6 @@ def dumpToFile(content):
     f.write(content + '\n')
     f.close()
 
-
-dumpToFile('-----------------------start-----------------------' + sys.argv[2])
 try:
     # 编译类型（debug还是release）
     build_type = sys.argv[1]
