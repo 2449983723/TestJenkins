@@ -39,6 +39,7 @@ try:
     if os.path.exists(or_code_file_path):
         os.remove(or_code_file_path)
     clearFile()
+    dumpToFile('-----------------generate start--------------------')
     dumpToFile(apk_path)
     dumpToFile(or_code_file_path)
 
@@ -79,5 +80,7 @@ try:
 
     # 保存二维码
     img.save(or_code_file_path)
+
+    dumpToFile('-----------------generate end--------------------')
 except Exception, e:
     dumpToFile('traceback.format_exc():\n%s' % traceback.format_exc())
