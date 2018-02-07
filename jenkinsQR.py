@@ -83,4 +83,6 @@ try:
 
     dumpToFile('-----------------generate end--------------------')
 except Exception, e:
+    # 如果发生错误，打印异常
+    dumpToFile('-----------------error generate--------------------')
     dumpToFile('traceback.format_exc():\n%s' % traceback.format_exc())
