@@ -57,7 +57,7 @@ android {
                         flavorName += "-"
                     }
                 }
-                def fileName = "com.opos.ads#ads-${flavorName}${variant.buildType.name}-${defaultConfig.versionName}-${buildTime()}.apk"
+                def fileName = "app#app-${flavorName}${variant.buildType.name}-${defaultConfig.versionName}-${buildTime()}.apk"
                 outputFileName = fileName
 
                 // 是否为Jenkins打包，输出路径不同
