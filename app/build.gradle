@@ -94,6 +94,20 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+
+// 在最后一个task后执行生成二维码胡操作
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks[graph.allTasks.size()-1].doLast {
+        if ("true".equals(IS_JENKINS)) {
+            println '---------------------doLast------------------------'
+        }
+    }
+}
+
+task testTask {
+    println 'do testTask'
+}
+
 // 在最后一个task后执行生成二维码胡操作
 //gradle.taskGraph.whenReady { graph ->
 //    graph.allTasks[graph.allTasks.size()-1].doLast {
